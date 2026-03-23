@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dolab | Premium Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --bg-deep: #060912;
+            --sidebar-bg: #0b1120;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --cyan: #00d2ff;
+            --magenta: #d946ef;
+            --yellow: #facc15;
+            --text-dim: #64748b;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Custom Styles */
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border-radius: 0.75rem;
+            margin: 0.15rem 1rem;
+        }
+
+        .sidebar-item.active {
+            background: linear-gradient(90deg, rgba(0, 210, 255, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            color: #fff;
+            position: relative;
+        }
+
+        .sidebar-item.active::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 20%;
+            bottom: 20%;
+            width: 4px;
+            background: var(--cyan);
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Card Aesthetics */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Hide Scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        input::placeholder { color: #475569; }
+
+        @media (max-width: 1024px) {
+            .mobile-nav-dock {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(11, 17, 32, 0.95);
+                backdrop-filter: blur(15px);
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+                display: flex;
+                justify-content: space-around;
+                padding: 1rem;
+                z-index: 100;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside class="hidden lg:flex flex-col w-72 h-screen sticky top-0 bg-[#0b1120] border-r border-white/5 z-50">
+            <div class="p-8 mb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="flex flex-col space-y-1.5">
+                        <div class="w-7 h-1 bg-white rounded-full"></div>
+                        <div class="w-4 h-1 bg-white rounded-full"></div>
+                        <div class="w-7 h-1 bg-white rounded-full"></div>
+                    </div>
+                    <span class="text-2xl font-black tracking-tight">Dolab</span>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto no-scrollbar">
+                <div class="px-10 py-3 text-[10px] font-extrabold text-slate-600 uppercase tracking-[0.25em]">Main Menu</div>
+                
+                <a href="#" class="sidebar-item active">
+                    <i class="fas fa-grid-2-horizontal mr-4 text-lg"></i> 
+                    <span class="flex-1">Dashboard</span>
+                    <i class="fas fa-chevron-right text-[10px] opacity-30"></i>
+                </a>
+
+                <div class="ml-14 flex flex-col space-y-3 mt-3 mb-6">
+                    <a href="#" class="text-[13px] text-slate-400 font-medium hover:text-cyan-400 transition-colors">Dashboard Light</a>
+                    <a href="#" class="text-[13px] text-slate-400 font-medium hover:text-cyan-400 transition-colors">Balance Page</a>
+                    <a href="#" class="text-[13px] text-slate-400 font-medium hover:text-cyan-400 transition-colors">Card Center</a>
+                    <a href="#" class="text-[13px] text-slate-400 font-medium hover:text-cyan-400 transition-colors">Invoices</a>
+                    <a href="#" class="text-[13px] text-slate-400 font-medium hover:text-cyan-400 transition-colors">Transaction History</a>
+                </div>
+
+                <a href="#" class="sidebar-item"><i class="fas fa-shapes mr-4 text-lg"></i> Apps <i class="fas fa-chevron-right ml-auto text-[10px] opacity-30"></i></a>
+                <a href="#" class="sidebar-item"><i class="fas fa-chart-simple mr-4 text-lg"></i> Charts <i class="fas fa-chevron-right ml-auto text-[10px] opacity-30"></i></a>
+                <a href="#" class="sidebar-item"><i class="fas fa-rocket mr-4 text-lg"></i> Bootstrap <i class="fas fa-chevron-right ml-auto text-[10px] opacity-30"></i></a>
+                <a href="#" class="sidebar-item"><i class="fas fa-plug mr-4 text-lg"></i> Plugins <i class="fas fa-chevron-right ml-auto text-[10px] opacity-30"></i></a>
+                <a href="#" class="sidebar-item"><i class="fas fa-table-list mr-4 text-lg"></i> Table <i class="fas fa-chevron-right ml-auto text-[10px] opacity-30"></i></a>
+            </nav>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="flex-1 p-6 lg:p-10 pb-28 lg:pb-12">
+            
+            <!-- Global Header -->
+            <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                <div class="flex items-center space-x-4">
+                    <div class="lg:hidden p-3 glass-card text-cyan-400">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <h1 class="text-2xl font-extrabold tracking-tight">Dashboard</h1>
+                </div>
+
+                <div class="flex-1 max-w-2xl relative">
+                    <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                    <input type="text" placeholder="Search here..." class="w-full bg-[#111827] border border-white/5 rounded-2xl py-3.5 pl-14 pr-6 text-sm font-medium focus:outline-none focus:ring-2 ring-cyan-500/30 transition-all">
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <div class="flex space-x-5 text-slate-400 text-lg">
+                        <div class="relative cursor-pointer hover:text-white transition-colors">
+                            <i class="far fa-bell"></i>
+                            <span class="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full border-2 border-[#060912]"></span>
+                        </div>
+                        <i class="far fa-comment-alt cursor-pointer hover:text-white transition-colors"></i>
+                        <i class="far fa-calendar-check cursor-pointer hover:text-white transition-colors"></i>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 pl-6 border-l border-white/10">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-[13px] font-bold">Adam Joe</p>
+                            <p class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest">Admin</p>
+                        </div>
+                        <img src="https://i.pravatar.cc/150?u=adamjoe" class="w-11 h-11 rounded-2xl border-2 border-white/5 shadow-xl" alt="Profile">
+                    </div>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Center Analytics Column -->
+                <div class="lg:col-span-8 space-y-8">
+                    
+                    <!-- Main Balance Summary Chart -->
+                    <div class="glass-card p-8">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-10 gap-4">
+                            <h3 class="text-lg font-bold">Your Balance Summary</h3>
+                            <div class="flex items-center space-x-8 text-[11px] font-extrabold uppercase tracking-wider">
+                                <div class="flex items-center space-x-2.5 cursor-pointer">
+                                    <div class="w-3 h-3 rounded-full border-2 border-cyan-400"></div>
+                                    <span class="text-slate-400">Monthly</span>
+                                </div>
+                                <div class="flex items-center space-x-2.5 cursor-pointer">
+                                    <div class="w-3 h-3 rounded-full border-2 border-slate-700"></div>
+                                    <span class="text-slate-500">Weekly</span>
+                                </div>
+                                <i class="fas fa-ellipsis-v text-slate-700 cursor-pointer"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-14 mb-10">
+                            <div class="space-y-1">
+                                <div class="flex items-center space-x-2 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">
+                                    <div class="w-5 h-5 rounded-md bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+                                        <i class="fas fa-arrow-up text-[8px]"></i>
+                                    </div>
+                                    <span>Income</span>
+                                </div>
+                                <p class="text-3xl font-black">$459,234.00</p>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="flex items-center space-x-2 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">
+                                    <div class="w-5 h-5 rounded-md bg-magenta-500/10 flex items-center justify-center text-magenta-400">
+                                        <i class="fas fa-arrow-down text-[8px]"></i>
+                                    </div>
+                                    <span>Expense</span>
+                                </div>
+                                <p class="text-3xl font-black">$23,456</p>
+                            </div>
+                        </div>
+
+                        <div class="h-[340px]">
+                            <canvas id="mainBalanceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Analytics Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="glass-card p-8">
+                            <div class="flex justify-between items-center mb-8">
+                                <h3 class="font-bold">Pie Chart</h3>
+                                <i class="fas fa-ellipsis-v text-slate-700"></i>
+                            </div>
+                            <div class="h-[240px] flex items-center justify-center relative">
+                                <canvas id="donutChart"></canvas>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span class="text-3xl font-black">70%</span>
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Average</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-8">
+                            <div class="flex justify-between items-center mb-8">
+                                <h3 class="font-bold">Your Balance</h3>
+                                <i class="fas fa-ellipsis-v text-slate-700"></i>
+                            </div>
+                            <div class="h-[240px]">
+                                <canvas id="verticalBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Stats Column -->
+                <div class="lg:col-span-4 space-y-6">
+                    
+                    <!-- Expense Stat -->
+                    <div class="glass-card p-7 flex justify-between items-start">
+                        <div>
+                            <h4 class="text-3xl font-black mb-1">$19,522</h4>
+                            <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-3">Expense</p>
+                            <p class="text-[11px] font-bold text-emerald-400">+1.5% <span class="text-slate-600 ml-1">than last month</span></p>
+                        </div>
+                        <div class="stat-circle text-cyan-400 border-cyan-400/20 shadow-[0_0_15px_rgba(0,210,255,0.1)]">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                    </div>
+
+                    <!-- Income Stat with Ring -->
+                    <div class="glass-card p-7 flex justify-between items-center">
+                        <div>
+                            <h4 class="text-3xl font-black mb-1">$45,234</h4>
+                            <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest mb-3">Income</p>
+                            <p class="text-[11px] font-bold text-rose-400">-2% <span class="text-slate-600 ml-1">than last month</span></p>
+                        </div>
+                        <div class="relative w-16 h-16">
+                            <canvas id="statRing"></canvas>
+                            <div class="absolute inset-0 flex items-center justify-center text-[10px] font-black">38%</div>
+                        </div>
+                    </div>
+
+                    <!-- Transactions with Sparkline -->
+                    <div class="glass-card p-7">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-3xl font-black mb-1">$984</h4>
+                                <p class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest">Transactions</p>
+                            </div>
+                            <div class="w-24 h-14">
+                                <canvas id="sparklineLine"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admission Bar Stat -->
+                    <div class="glass-card p-7">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h4 class="font-bold text-sm mb-1">Admission Summary</h4>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-2xl font-black">$4,563</span>
+                                    <span class="text-[11px] text-emerald-400 font-bold">+1.5%</span>
+                                </div>
+                            </div>
+                            <button class="w-9 h-9 rounded-full bg-slate-800/60 flex items-center justify-center text-xs text-slate-400 hover:text-white transition-all">
+                                <i class="fas fa-arrow-down -rotate-45"></i>
+                            </button>
+                        </div>
+                        <div class="h-[130px]">
+                            <canvas id="admissionBars"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Others Category List -->
+                    <div class="glass-card p-7">
+                        <h4 class="font-bold text-sm mb-7">Others</h4>
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-2.5 h-2.5 rounded-full ring-2 ring-cyan-500 ring-offset-4 ring-offset-[#111827]"></div>
+                                    <span class="text-[13px] font-bold text-slate-300">Installment</span>
+                                </div>
+                                <span class="text-[13px] font-black">$5,412</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-2.5 h-2.5 rounded-full ring-2 ring-magenta-500 ring-offset-4 ring-offset-[#111827]"></div>
+                                    <span class="text-[13px] font-bold text-slate-300">Investment</span>
+                                </div>
+                                <span class="text-[13px] font-black">$3,754</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-2.5 h-2.5 rounded-full ring-2 ring-yellow-400 ring-offset-4 ring-offset-[#111827]"></div>
+                                    <span class="text-[13px] font-bold text-slate-300">Property</span>
+                                </div>
+                                <span class="text-[13px] font-black">$3,754</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Directory -->
+                    <div class="glass-card p-7">
+                        <div class="flex justify-between items-center mb-8">
+                            <h4 class="font-bold text-sm">Contacts</h4>
+                            <div class="w-7 h-7 rounded-xl bg-cyan-500 shadow-lg shadow-cyan-500/30 flex items-center justify-center text-[11px] cursor-pointer">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                        <div class="space-y-5">
+                            <div class="flex items-center justify-between group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-all">
+                                <div class="flex items-center space-x-4">
+                                    <img src="https://i.pravatar.cc/100?u=dedi" class="w-10 h-10 rounded-2xl filter grayscale group-hover:grayscale-0 transition-all">
+                                    <div>
+                                        <p class="text-[13px] font-bold">Dedi Cahyadi</p>
+                                        <p class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest">Head Manager</p>
+                                    </div>
+                                </div>
+                                <i class="far fa-paper-plane text-slate-700 group-hover:text-cyan-400 transition-colors"></i>
+                            </div>
+                            <div class="flex items-center justify-between group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-all">
+                                <div class="flex items-center space-x-4">
+                                    <img src="https://i.pravatar.cc/100?u=evans" class="w-10 h-10 rounded-2xl filter grayscale group-hover:grayscale-0 transition-all">
+                                    <div>
+                                        <p class="text-[13px] font-bold">Evans John</p>
+                                        <p class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest">Programmer</p>
+                                    </div>
+                                </div>
+                                <i class="far fa-paper-plane text-slate-700 group-hover:text-cyan-400 transition-colors"></i>
+                            </div>
+                            <div class="flex items-center justify-between group cursor-pointer hover:bg-white/5 p-2 -m-2 rounded-xl transition-all">
+                                <div class="flex items-center space-x-4">
+                                    <img src="https://i.pravatar.cc/100?u=brian" class="w-10 h-10 rounded-2xl filter grayscale group-hover:grayscale-0 transition-all">
+                                    <div>
+                                        <p class="text-[13px] font-bold">Brian Brandon</p>
+                                        <p class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest">Graphic Designer</p>
+                                    </div>
+                                </div>
+                                <i class="far fa-paper-plane text-slate-700 group-hover:text-cyan-400 transition-colors"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Nav Bar (Docked) -->
+    <nav class="mobile-nav-dock lg:hidden">
+        <i class="fas fa-home text-cyan-400 text-xl"></i>
+        <i class="fas fa-chart-pie text-slate-500 text-xl"></i>
+        <i class="fas fa-wallet text-slate-500 text-xl"></i>
+        <i class="fas fa-user-circle text-slate-500 text-xl"></i>
+    </nav>
+
+    <script>
+        // Set Chart.js Defaults
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+        Chart.defaults.font.weight = '700';
+
+        const initDashboard = () => {
+            // 1. Balance Summary (Main Line Chart)
+            new Chart(document.getElementById('mainBalanceChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['JAN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
+                    datasets: [{
+                        data: [280, 520, 340, 710, 640, 890, 810],
+                        borderColor: '#00d2ff',
+                        borderWidth: 5,
+                        tension: 0.45,
+                        pointRadius: 0,
+                        fill: false
+                    }, {
+                        data: [190, 340, 260, 510, 440, 580, 520],
+                        borderColor: '#d946ef',
+                        borderWidth: 5,
+                        tension: 0.45,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            max: 1000,
+                            grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false },
+                            ticks: { stepSize: 200, padding: 15 }
+                        },
+                        x: { grid: { display: false }, ticks: { padding: 15 } }
+                    }
+                }
+            });
+
+            // 2. Pie (Donut) Chart
+            new Chart(document.getElementById('donutChart'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [40, 30, 30],
+                        backgroundColor: ['#00d2ff', '#d946ef', '#facc15'],
+                        borderWidth: 0,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    cutout: '80%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 3. Balance Bars (Yellow Bars)
+            new Chart(document.getElementById('verticalBarChart'), {
+                type: 'bar',
+                data: {
+                    labels: Array(10).fill(''),
+                    datasets: [{
+                        data: [50, 65, 55, 90, 75, 55, 100, 85, 75, 60],
+                        backgroundColor: '#facc15',
+                        borderRadius: 8,
+                        barThickness: 14
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: false },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 4. Side Ring (38%)
+            new Chart(document.getElementById('statRing'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [38, 62],
+                        backgroundColor: ['#d946ef', 'rgba(255,255,255,0.04)'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '85%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 5. Mini Sparkline
+            new Chart(document.getElementById('sparklineLine'), {
+                type: 'line',
+                data: {
+                    labels: [1,2,3,4,5,6],
+                    datasets: [{
+                        data: [35, 25, 75, 55, 95, 45],
+                        borderColor: '#00d2ff',
+                        borderWidth: 3.5,
+                        tension: 0.5,
+                        pointRadius: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { display: false } }
+                }
+            });
+
+            // 6. Admission Summary Bars (Tri-color)
+            new Chart(document.getElementById('admissionBars'), {
+                type: 'bar',
+                data: {
+                    labels: ['10', '20', '30', '40', '50', '60'],
+                    datasets: [{
+                        data: [35, 55, 45, 80, 65, 55],
+                        backgroundColor: (ctx) => {
+                            const val = ctx.raw;
+                            if (val > 70) return '#d946ef';
+                            if (val > 50) return '#00d2ff';
+                            return '#1e293b';
+                        },
+                        borderRadius: 6,
+                        barThickness: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false },
+                            ticks: { stepSize: 20 }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        };
+
+        window.addEventListener('load', initDashboard);
+    </script>
+</body>
+</html>
